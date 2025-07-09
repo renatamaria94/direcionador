@@ -161,11 +161,11 @@ for aba in abas_escolhidas:
         st.plotly_chart(fig_corr, use_container_width=True)
 
     # PDF
-    if radar_result and fig_corr:
-        pdf_bytes = gerar_pdf(aba, pop_pct, diag_pct)
-        st.download_button(
-            label=f"📄 Baixar Relatório ({aba}) em PDF",
-            data=pdf_bytes,
-            file_name=f"relatorio_{aba}.pdf",
-            mime="application/pdf"
-        )
+    #if radar_result and fig_corr:
+    #    pdf_bytes = gerar_pdf(aba, pop_pct, diag_pct)
+    #    st.download_button(
+    #        label=f"📄 Baixar Relatório ({aba}) em PDF",
+    #        data=pdf_bytes,
+    #        file_name=f"relatorio_{aba}.pdf",
+    #        mime="application/pdf"
+    #    )
