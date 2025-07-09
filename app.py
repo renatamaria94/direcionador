@@ -1,4 +1,5 @@
 # para rodar:
+# para rodar:
 # streamlit run app.py
 
 import streamlit as st
@@ -86,7 +87,7 @@ def correspondencia(df, eixo):
     df["Governo"] = 1
     df = df.sort_values("aderencia", ascending=False).reset_index(drop=True)
 
-    # usa a coluna "governo" como rótulo
+    # usa a coluna \"governo\" como rótulo
     rótulos_reais = df['governo'].astype(str)
 
     df["governo_id"] = df.index.map(lambda i: f"id_{i+1}")
@@ -114,14 +115,19 @@ def correspondencia(df, eixo):
 
     y_labels = [mapeamento[id_] for id_ in ordem]
 
+    # calcula altura dinâmica: 30px por linha, mínimo 400
+    altura = max(400, len(ordem) * 30)
+
     fig.update_layout(
         yaxis=dict(title="Metas", tickmode="array", tickvals=ordem, ticktext=y_labels),
         xaxis_title="", legend_title="Aderência",
         legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-        title=f"Correspondência - {eixo}", height=600
+        title=f"Correspondência - {eixo}",
+        height=altura
     )
 
     return fig
+
 
 # ========= PDF =========
 def gerar_pdf(aba, pop_pct, diag_pct):
