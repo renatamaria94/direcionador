@@ -1,6 +1,7 @@
 # para rodar:
 # streamlit run app.py
 
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -86,10 +87,7 @@ def correspondencia(df, eixo):
     df["Governo"] = 1
     df = df.sort_values("aderencia", ascending=False).reset_index(drop=True)
 
-    if 'governo' in df.columns:
-        rótulos_reais = df['governo'].astype(str)
-    else:
-        rótulos_reais = df.index.map(lambda i: f"Meta_{i+1}")
+    rótulos_reais = df.index.map(lambda i: f"Meta_{i+1}")
 
     df["governo_id"] = df.index.map(lambda i: f"id_{i+1}")
     df["nivel_aderencia"] = df["aderencia"].map({0:"Baixa",0.5:"Média",1:"Alta"})
@@ -114,7 +112,6 @@ def correspondencia(df, eixo):
         category_orders={"Eixo":categorias}, hover_data={"rótulo":True}
     )
 
-    fig.update_traces(marker=dict(size=10, line=dict(color='black', width=1)))
     y_labels = [mapeamento[id_] for id_ in ordem]
 
     fig.update_layout(
@@ -127,7 +124,7 @@ def correspondencia(df, eixo):
     return fig
 
 # ========= PDF =========
-def gerar_pdf(radar_bytes, corr_bytes, aba, pop_pct, diag_pct):
+def gerar_pdf(aba, pop_pct, diag_pct):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
@@ -139,18 +136,7 @@ def gerar_pdf(radar_bytes, corr_bytes, aba, pop_pct, diag_pct):
     pdf.cell(0,10,txt=f"Diagnóstico: {diag_pct}%",ln=True)
     pdf.ln(10)
 
-    pdf.cell(0,10,"Radar Chart",ln=True)
-    radar_path = f"radar_temp_{aba}.png"
-    with open(radar_path,"wb") as f:
-        f.write(radar_bytes)
-    pdf.image(radar_path,w=150)
-    pdf.ln(10)
-
-    pdf.cell(0,10,"Gráfico de Correspondência",ln=True)
-    corr_path = f"corr_temp_{aba}.png"
-    with open(corr_path,"wb") as f:
-        f.write(corr_bytes)
-    pdf.image(corr_path,w=150)
+    pdf.cell(0,10,"Os gráficos interativos estão disponíveis na aplicação.",ln=True)
 
     return pdf.output(dest='S').encode('latin1')
 
@@ -168,31 +154,15 @@ for aba in abas_escolhidas:
         fig_radar, pop_pct, diag_pct = radar_result
         st.plotly_chart(fig_radar, use_container_width=True)
 
-        radar_png = fig_radar.to_image(format="png")
-        st.download_button(
-            label=f"📥 Baixar Radar Chart ({aba})",
-            data=radar_png,
-            file_name=f"radar_{aba}.png",
-            mime="image/png"
-        )
-
     # CORRESPONDÊNCIA
     st.subheader(f"Correspondência - {aba}")
     fig_corr = correspondencia(df, aba)
     if fig_corr:
         st.plotly_chart(fig_corr, use_container_width=True)
 
-        corr_png = fig_corr.to_image(format="png")
-        st.download_button(
-            label=f"📥 Baixar Correspondência ({aba})",
-            data=corr_png,
-            file_name=f"correspondencia_{aba}.png",
-            mime="image/png"
-        )
-
     # PDF
     if radar_result and fig_corr:
-        pdf_bytes = gerar_pdf(radar_png, corr_png, aba, pop_pct, diag_pct)
+        pdf_bytes = gerar_pdf(aba, pop_pct, diag_pct)
         st.download_button(
             label=f"📄 Baixar Relatório ({aba}) em PDF",
             data=pdf_bytes,
