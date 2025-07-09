@@ -1,7 +1,6 @@
 # para rodar:
 # streamlit run app.py
 
-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -87,7 +86,11 @@ def correspondencia(df, eixo):
     df["Governo"] = 1
     df = df.sort_values("aderencia", ascending=False).reset_index(drop=True)
 
-    rótulos_reais = df.index.map(lambda i: f"Meta_{i+1}")
+    # Usa a coluna com o nome real da meta, se existir
+    if 'meta_nome' in df.columns:
+        rótulos_reais = df['meta_nome'].astype(str)
+    else:
+        rótulos_reais = df.index.map(lambda i: f"Meta_{i+1}")
 
     df["governo_id"] = df.index.map(lambda i: f"id_{i+1}")
     df["nivel_aderencia"] = df["aderencia"].map({0:"Baixa",0.5:"Média",1:"Alta"})
