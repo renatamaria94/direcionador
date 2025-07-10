@@ -78,6 +78,7 @@ def radar_chart(df, eixo):
     return fig, pop_pct, diag_pct
 
 # ========= CORRESPONDÊNCIA =========
+
 def correspondencia(df, eixo):
     if not {'populacao', 'diagnostico', 'aderencia'}.issubset(df.columns):
         st.warning(f"A aba {eixo} não tem as colunas necessárias.")
@@ -117,6 +118,39 @@ def correspondencia(df, eixo):
 
     # calcula altura dinâmica: 30px por linha, mínimo 400
     altura = max(400, len(ordem) * 30)
+    def lista_formatada(lista):
+        if len(lista) == 0:
+            return ""
+        if len(lista) == 1:
+            return lista[0]
+        return ', '.join(lista[:-1]) + ' e ' + lista[-1]
+
+
+    # prepara as listas por nível de aderência
+    altas = df.loc[df['nivel_aderencia'] == 'Alta', 'governo'].astype(str).tolist()
+    medias = df.loc[df['nivel_aderencia'] == 'Média', 'governo'].astype(str).tolist()
+    baixas = df.loc[df['nivel_aderencia'] == 'Baixa', 'governo'].astype(str).tolist()
+    # inicializa as strings
+    texto_altas = ""
+    texto_medias = ""
+    texto_baixas = ""
+
+    if altas:
+        texto_altas = f"As metas com **alta aderência** são: {lista_formatada(altas)}."
+    if medias:
+        texto_medias = f"As metas com **média aderência** são: {lista_formatada(medias)}."
+    if baixas:
+        texto_baixas = f"As metas com **baixa aderência** são: {lista_formatada(baixas)}."
+
+    if texto_altas:
+        st.success(texto_altas)
+    if texto_medias:
+        st.info(texto_medias)
+    if texto_baixas:
+        st.error(texto_baixas)
+
+
+
 
     fig.update_layout(
         yaxis=dict(title="Metas", tickmode="array", tickvals=ordem, ticktext=y_labels),
@@ -125,7 +159,7 @@ def correspondencia(df, eixo):
         title=f"Correspondência - {eixo}",
         height=altura
     )
-
+# Metas vai ser Ações compactuadas
     return fig
 
 
@@ -175,3 +209,4 @@ for aba in abas_escolhidas:
     #        file_name=f"relatorio_{aba}.pdf",
     #        mime="application/pdf"
     #    )
+
