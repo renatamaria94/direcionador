@@ -2,6 +2,7 @@
 # para rodar:
 # streamlit run app.py
 
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -209,4 +210,3 @@ for aba in abas_escolhidas:
     #        file_name=f"relatorio_{aba}.pdf",
     #        mime="application/pdf"
     #    )
-
